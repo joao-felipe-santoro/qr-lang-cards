@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+*.egg-info/
+
+# Generated artifacts — source of truth is cards_source.csv + config.json
+python/audio_cache/
+python/emoji_cache/
+python/cards.json
+python/cards_to_print.pdf
+python/qrcodes_cards.pdf
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
