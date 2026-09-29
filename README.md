@@ -95,23 +95,30 @@ Connect via SSH to the UNO Q or use the App Lab terminal:
 pip3 install -r requirements.txt
 ```
 
-### 3. Copy project files to the UNO Q
+### 3. Create your config
 
 ```bash
-scp reader.py generate_cards.py generate_cards_pdf.py data/ requirements.txt user@uno-q-ip:~/lang-card/
+cp config.json.example config.json
+# then edit config.json as needed
+```
+
+### 4. Copy project files to the UNO Q
+
+```bash
+scp reader.py config.json data/ requirements.txt user@uno-q-ip:~/lang-card/
 ```
 
 Or copy via USB drive. The files needed are:
 
 ```
 reader.py
+config.json
 data/
-├── config.json
 └── cards_source.csv
 requirements.txt
 ```
 
-### 4. Find the serial port
+### 5. Find the serial port
 
 ```bash
 ls /dev/ttyUSB* /dev/ttyACM*
@@ -216,17 +223,17 @@ lang-card/
 ├── reader.py              # Main script — runs on the UNO Q Linux side
 ├── generate_cards.py      # CSV → cards.json export / validation utility
 ├── generate_cards_pdf.py  # Card faces PDF generator (word + QR, print & cut)
+├── config.json            # Language configuration (gitignored — copy from .example)
+├── config.json.example    # Config template
 ├── requirements.txt       # Python dependencies
 ├── data/
-│   ├── cards_source.csv       # Card database — source of truth
-│   ├── config.json            # Language configuration
-│   └── config.json.example    # Config template
+│   └── cards_source.csv   # Card database — source of truth
 └── arduino/
     └── stm32_sketch/
         └── stm32_sketch.ino   # Arduino sketch — runs on the STM32 side
 ```
 
-> `audio_cache/`, `emoji_cache/`, `cards.json`, and `qrcodes_cards.pdf` are generated artifacts and are not committed to git.
+> `audio_cache/`, `emoji_cache/`, `cards.json`, `cards_to_print.pdf`, `qrcodes_cards.pdf`, and `config.json` are gitignored.
 
 ---
 
