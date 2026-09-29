@@ -8,12 +8,13 @@ venv/
 .venv/
 *.egg-info/
 
-# Generated artifacts — source of truth is cards_source.csv + config.json
-python/audio_cache/
-python/emoji_cache/
-python/cards.json
-python/cards_to_print.pdf
-python/qrcodes_cards.pdf
+# Generated artifacts — source of truth is data/cards_source.csv
+
+audio_cache/
+emoji_cache/
+cards.json
+cards_to_print.pdf
+qrcodes_cards.pdf
 
 # macOS
 .DS_Store
@@ -21,3 +22,6 @@ python/qrcodes_cards.pdf
 # Editor
 .vscode/
 *.swp
+
+# Config
+config.json

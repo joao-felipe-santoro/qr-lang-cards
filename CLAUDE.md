@@ -26,16 +26,16 @@ The STM32 and Linux side communicate via the App Lab Bridge, which exposes the S
 
 ```bash
 # Normal mode (GM65 connected)
-python3 python/reader.py
+python3 reader.py
 
 # Debug mode — no hardware needed, type card IDs at prompt
-python3 python/reader.py --dry-run
+python3 reader.py --dry-run
 
 # Specific serial port
-python3 python/reader.py --port /dev/ttyACM0
+python3 reader.py --port /dev/ttyACM0
 
 # Adjust volume (0.0–1.0)
-python3 python/reader.py --volume 0.7
+python3 reader.py --volume 0.7
 ```
 
 First run generates and caches audio files via gTTS (requires internet, takes 3–5 min). Subsequent runs are instant.
@@ -43,7 +43,7 @@ First run generates and caches audio files via gTTS (requires internet, takes 3�
 ### Regenerate QR Code PDF
 
 ```bash
-python3 python/generate_qrcodes.py
+python3 generate_cards_pdf.py
 # → outputs qrcodes_cards.pdf
 ```
 
@@ -64,12 +64,12 @@ ls /dev/ttyUSB* /dev/ttyACM*
 
 | File | Purpose |
 |---|---|
-| `python/reader.py` | Main Python script (Linux side) |
-| `python/cards.json` | Card database — 78 cards + emoji, language keys match config |
-| `python/config.json` | Language configuration (base_language + languages list) |
+| `reader.py` | Main Python script (Linux side) |
+| `cards.json` | Card database — generated artifact, language keys match config |
+| `config.json` | Language configuration (base_language + languages list) |
+| `data/cards_source.csv` | Card database — source of truth |
 | `arduino/stm32_sketch/stm32_sketch.ino` | Arduino sketch for STM32 side |
-| `python/generate_qrcodes.py` | Generates `qrcodes_cards.pdf` for printing |
-| `cards/cards_to_print.pdf` | Pre-generated card PDF (ready to print) |
+| `generate_cards_pdf.py` | Generates `cards_to_print.pdf` for printing |
 
 ## cards.json Structure
 
@@ -104,5 +104,5 @@ sudo systemctl start card-reader
 
 - **RGB LED** in this build is **common anode** — `HIGH = on`. If using common cathode, invert logic in `stm32_sketch.ino` (`ledSet`) and in the README wiring diagram.
 - GM65 default baud rate: 9600. Both `reader.py` and the sketch use this.
-- Audio cache stored in `python/audio_cache/` (auto-created, named `<card_id>_<lang>.mp3`).
+- Audio cache stored in `audio_cache/` (auto-created, named `<card_id>_<lang>.mp3`).
 - pygame buffer is 512 samples; increase to 1024 in `reader.py` if audio cuts out.

@@ -1,6 +1,0 @@
-pyserial>=3.5
-gTTS>=2.5
-pygame>=2.6
-reportlab>=4.0
-pillow>=10.0
-numpy>=1.26

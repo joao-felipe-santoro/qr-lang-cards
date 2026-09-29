@@ -1,0 +1,8 @@
+{
+  "base_language": "pt-br",
+  "languages": [
+    { "key": "pt-br", "label": "Português Brasil" },
+    { "key": "en",    "label": "English"          },
+    { "key": "de",    "label": "Deutsch"           }
+  ]
+}

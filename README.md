@@ -4,7 +4,7 @@
 An educational device for children to learn vocabulary in **multiple languages**.  
 Scan a QR code card with the GM65 reader and the device speaks the word in all configured languages.
 
-Languages are fully configurable via `python/config.json` — no code changes needed.  
+Languages are fully configurable via `config.json` — no code changes needed.  
 The default set is **Brazilian Portuguese (`pt-br`), English (`en`), and German (`de`)**.
 
 ---
@@ -92,22 +92,23 @@ Sketch → Upload
 Connect via SSH to the UNO Q or use the App Lab terminal:
 
 ```bash
-pip3 install -r python/requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### 3. Copy project files to the UNO Q
 
 ```bash
-scp -r python/ user@uno-q-ip:~/lang-card/
+scp reader.py generate_cards.py generate_cards_pdf.py data/ requirements.txt user@uno-q-ip:~/lang-card/
 ```
 
 Or copy via USB drive. The files needed are:
 
 ```
-python/
-├── reader.py
+reader.py
+data/
 ├── config.json
 └── cards_source.csv
+requirements.txt
 ```
 
 ### 4. Find the serial port
@@ -123,29 +124,29 @@ ls /dev/ttyUSB* /dev/ttyACM*
 
 ```bash
 # Normal mode (GM65 connected)
-python3 python/reader.py
+python3 reader.py
 
 # Different port
-python3 python/reader.py --port /dev/ttyACM0
+python3 reader.py --port /dev/ttyACM0
 
 # Debug mode — no hardware, type card IDs at the prompt
-python3 python/reader.py --dry-run
+python3 reader.py --dry-run
 
 # Adjust volume (0.0–1.0)
-python3 python/reader.py --volume 0.7
+python3 reader.py --volume 0.7
 ```
 
 ### First run
 
 On the first run, audio files for all cards are generated and cached via gTTS.  
 This takes **3–5 minutes** (requires internet).  
-Subsequent runs are instant — audio is cached in `python/audio_cache/` (not committed to git).
+Subsequent runs are instant — audio is cached in `audio_cache/` (not committed to git).
 
 ---
 
 ## Language configuration
 
-Edit `python/config.json` to change which languages are used:
+Edit `config.json` to change which languages are used:
 
 ```json
 {
@@ -165,13 +166,13 @@ Edit `python/config.json` to change which languages are used:
 | `base_language` | Primary language (used as fallback ordering) |
 
 The `key` doubles as the gTTS language code — use the codes from the [gTTS language list](https://gtts.readthedocs.io/en/latest/module.html#languages-gtts-lang) as your keys.  
-To add a language: add an entry to `config.json` and a matching column to `cards_source.csv`.
+To add a language: add an entry to `config.json` and a matching column to `data/cards_source.csv`.
 
 ---
 
 ## Managing cards
 
-Cards live in `python/cards_source.csv` — the single source of truth. `reader.py` loads it directly on boot.
+Cards live in `data/cards_source.csv` — the single source of truth. `reader.py` loads it directly on boot.
 
 ```
 category,id,emoji,pt-br,en,de
@@ -185,26 +186,26 @@ animais,animal_002,🦁,Leão,Lion,Löwe
 **To export `cards.json`** (for inspection or use with other tools):
 
 ```bash
-python3 python/generate_cards.py
-# validates against config.json and writes python/cards.json
+python3 generate_cards.py
+# validates against config.json and writes cards.json
 
-python3 python/generate_cards.py --validate   # check only, no file written
+python3 generate_cards.py --validate   # check only, no file written
 ```
 
 **To generate the card faces PDF** (emoji visual + word labels + embedded QR code, ready to print and cut):
 
 ```bash
-python3 python/generate_cards_pdf.py
-# → outputs python/cards_to_print.pdf  (2×3 cards per A4 page)
+python3 generate_cards_pdf.py
+# → outputs cards_to_print.pdf  (2×3 cards per A4 page)
 
-python3 python/generate_cards_pdf.py --cols 3 --rows 4   # denser layout
+python3 generate_cards_pdf.py --cols 3 --rows 4   # denser layout
 
-python3 python/generate_cards_pdf.py --cheatsheet        # print emoji codepoint table and exit
+python3 generate_cards_pdf.py --cheatsheet        # print emoji codepoint table and exit
 ```
 
 The PDF uses `base_language` as the main word label and the other languages as a subtitle.
 
-Emoji images are downloaded automatically from [Noto Emoji](https://github.com/googlefonts/noto-emoji) on the first run and cached in `python/emoji_cache/` — no manual font installation needed.
+Emoji images are downloaded automatically from [Noto Emoji](https://github.com/googlefonts/noto-emoji) on the first run and cached in `emoji_cache/` — no manual font installation needed.
 
 ---
 
@@ -212,22 +213,20 @@ Emoji images are downloaded automatically from [Noto Emoji](https://github.com/g
 
 ```
 lang-card/
-├── python/
-│   ├── reader.py              # Main script — runs on the UNO Q Linux side
-│   ├── config.json            # Language configuration
-│   ├── config.json.example    # Config template
+├── reader.py              # Main script — runs on the UNO Q Linux side
+├── generate_cards.py      # CSV → cards.json export / validation utility
+├── generate_cards_pdf.py  # Card faces PDF generator (word + QR, print & cut)
+├── requirements.txt       # Python dependencies
+├── data/
 │   ├── cards_source.csv       # Card database — source of truth
-│   ├── generate_cards.py      # CSV → cards.json export / validation utility
-│   ├── generate_cards_pdf.py  # Card faces PDF generator (word + QR, print & cut)
-│   └── requirements.txt       # Python dependencies
-├── arduino/
-│   └── stm32_sketch/
-│       └── stm32_sketch.ino   # Arduino sketch — runs on the STM32 side
-└── cards/
-    └── cards_to_print.pdf     # Ready-to-print card sheet
+│   ├── config.json            # Language configuration
+│   └── config.json.example    # Config template
+└── arduino/
+    └── stm32_sketch/
+        └── stm32_sketch.ino   # Arduino sketch — runs on the STM32 side
 ```
 
-> `python/audio_cache/`, `python/emoji_cache/`, `python/cards.json`, and `python/qrcodes_cards.pdf` are generated artifacts and are not committed to git.
+> `audio_cache/`, `emoji_cache/`, `cards.json`, and `qrcodes_cards.pdf` are generated artifacts and are not committed to git.
 
 ---
 
@@ -253,8 +252,8 @@ Description=Lang Card Reader
 After=sound.target network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/user/lang-card/python/reader.py
-WorkingDirectory=/home/user/lang-card/python
+ExecStart=/usr/bin/python3 /home/user/lang-card/reader.py
+WorkingDirectory=/home/user/lang-card
 Restart=always
 User=user
 
