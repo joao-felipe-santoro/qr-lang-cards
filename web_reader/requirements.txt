@@ -1,0 +1,6 @@
+# Arduino App Lab bricks (camera_code_detection, web_ui, dbstorage_sqlstore,
+# app_utils, app_peripherals) are pre-installed in the App Lab environment.
+
+# TTS generation (audio playback happens in the browser — no pygame needed)
+gTTS>=2.5
+pillow>=10.0
